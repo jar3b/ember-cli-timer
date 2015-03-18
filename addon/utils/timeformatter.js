@@ -16,14 +16,19 @@ export default Ember.Object.create({
       return h + ":" + m;
     } else if(format === "HH:MM:SS") {
       return h + ":" + m + ":" + s;
+    } else if(format === "MM:SS") {
+      return m + ":" + s;
     }
   },
-  
-  getSecs: function(time){
+
+  getSecs: function(time, format){
     var arr = time.split(':');
+    if(format && format === "MM:SS") {
+      arr.unshift("00");
+    }
     var h = arr[0];
     var m = arr[1];
-    var s = arr[2]; 
+    var s = arr[2];
     return (parseFloat(h) * 3600 + parseFloat(m) * 60 + parseFloat(s));
   }
 });

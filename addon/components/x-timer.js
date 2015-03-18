@@ -12,6 +12,7 @@ export default Ember.Component.extend({
   isStopWatch: false,
   //TODO: check the usage of this variable
   isRunning: false,
+  format: "HH:MM:SS",
 
   didInsertElement: function(){
     if(this.get("autoStart")){
@@ -29,7 +30,7 @@ export default Ember.Component.extend({
     this.set('timerId', Ember.run.later(this, function() {
       var timeElapsed = Date.now() - startTimeStamp;
       var secs = timeElapsed / 1000;
-      self.set("duration", Formatter.getTimefromSecs(secs, "HH:MM:SS"));
+      self.set("duration", Formatter.getTimefromSecs(secs, this.get('format')));
       self.run();
     }, 25));
   },
@@ -40,7 +41,7 @@ export default Ember.Component.extend({
     this.set('timerId', Ember.run.later(this, function() {
       var timeLeft = endTimeStamp - Date.now();
       var secsLeft = timeLeft / 1000;
-      self.set("duration", Formatter.getTimefromSecs(secsLeft, "HH:MM:SS"));
+      self.set("duration", Formatter.getTimefromSecs(secsLeft, this.get('format')));
       self.runDown();
     }, 25));
   },
@@ -50,7 +51,7 @@ export default Ember.Component.extend({
       var startTime = this.get("startTime");
       var endTime = this.get("endTime");
       var duration = this.get("duration");
-      var endAt = duration ? Formatter.getSecs(duration)*1000 : 0;
+      var endAt = duration ? Formatter.getSecs(duration, this.get('format'))*1000 : 0;
       if(startTime) {
         this.set("startTimeStamp", Date.now() - (endAt || startTime*1000));
         this.set("isRunning", true);
@@ -79,8 +80,8 @@ export default Ember.Component.extend({
       var duration = this.get("duration");
       var isRunning = this.get("isRunning");
       if(isRunning) {
-        this.set("startTimeStamp", Formatter.getSecs(duration));
-        this.set("endTimeStamp", Formatter.getSecs(duration));
+        this.set("startTimeStamp", Formatter.getSecs(duration, this.get('format')));
+        this.set("endTimeStamp", Formatter.getSecs(duration, this.get('format')));
         this.sendAction("updatePausedTime", duration);
         this.send("stop");
       } else {
