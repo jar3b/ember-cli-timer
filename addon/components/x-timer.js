@@ -14,72 +14,72 @@ export default Ember.Component.extend({
   isRunning: false,
   format: "HH:MM:SS",
 
-  didInsertElement: function(){
-    if(this.get("autoStart")){
+  didInsertElement: function () {
+    if (this.get("autoStart")) {
       this.send("start");
     }
   },
 
-  showStartBtn: function(){
+  showStartBtn: function () {
     return this.get("isStopWatch") || !this.get("autoStart");
   }.property('autoStart', 'isStopWatch'),
 
-  run: function(){
-    var self = this;
-    var startTimeStamp = this.get("startTimeStamp");
-    this.set('timerId', Ember.run.later(this, function() {
-      var timeElapsed = Date.now() - startTimeStamp;
-      var secs = timeElapsed / 1000;
-      self.set("duration", Formatter.getTimefromSecs(secs, this.get('format')));
+  run: function () {
+    const self = this;
+    const startTimeStamp = this.get("startTimeStamp");
+    this.set('timerId', Ember.run.later(this, function () {
+      const timeElapsed = Date.now() - startTimeStamp;
+      const secs = timeElapsed / 1000;
+      self.set("duration", Formatter.getTimefromSecs(secs, self.get('format')));
       self.run();
     }, 25));
   },
 
-  runDown: function(){
-    var self = this;
-    var endTimeStamp = this.get("endTimeStamp");
-    this.set('timerId', Ember.run.later(this, function() {
-      var timeLeft = endTimeStamp - Date.now();
-      var secsLeft = timeLeft / 1000;
-      self.set("duration", Formatter.getTimefromSecs(secsLeft, this.get('format')));
+  runDown: function () {
+    const self = this;
+    const endTimeStamp = this.get("endTimeStamp");
+    this.set('timerId', Ember.run.later(this, function () {
+      const timeLeft = endTimeStamp - Date.now();
+      const secsLeft = timeLeft / 1000;
+      self.set("duration", Formatter.getTimefromSecs(secsLeft, self.get('format')));
       self.runDown();
     }, 25));
   },
 
   actions: {
-    start: function(){
-      var startTime = this.get("startTime");
-      var endTime = this.get("endTime");
-      var duration = this.get("duration");
-      var endAt = duration ? Formatter.getSecs(duration, this.get('format'))*1000 : 0;
-      if(startTime) {
-        this.set("startTimeStamp", Date.now() - (endAt || startTime*1000));
+    start: function () {
+      const startTime = this.get("startTime");
+      const endTime = this.get("endTime");
+      const duration = this.get("duration");
+      const endAt = duration ? Formatter.getSecs(duration, this.get('format')) * 1000 : 0;
+      if (startTime) {
+        this.set("startTimeStamp", Date.now() - (endAt || startTime * 1000));
         this.set("isRunning", true);
         this.run();
-      } else if(endTime) {
-        this.set("endTimeStamp", Date.now() + (endAt || endTime*1000));
+      } else if (endTime) {
+        this.set("endTimeStamp", Date.now() + (endAt || endTime * 1000));
         this.set("isRunning", true);
         this.runDown();
       }
     },
 
-    stop: function(reset){
-      var timerId = this.get("timerId");
-      var duration = this.get("duration");
+    stop: function (reset) {
+      const timerId = this.get("timerId");
+      const duration = this.get("duration");
       Ember.run.cancel(timerId);
       this.sendAction("updateRecordedTime", duration);
       this.set("isRunning", false);
-      if(reset) {
+      if (reset) {
         this.set("startTimeStamp", 0);
         this.set("endTimeStamp", 0);
         this.set("duration", 0);
       }
     },
 
-    pause: function(){
-      var duration = this.get("duration");
-      var isRunning = this.get("isRunning");
-      if(isRunning) {
+    pause: function () {
+      const duration = this.get("duration");
+      const isRunning = this.get("isRunning");
+      if (isRunning) {
         this.set("startTimeStamp", Formatter.getSecs(duration, this.get('format')));
         this.set("endTimeStamp", Formatter.getSecs(duration, this.get('format')));
         this.sendAction("updatePausedTime", duration);
@@ -90,8 +90,8 @@ export default Ember.Component.extend({
     }
   },
 
-  willDestroyElement: function() {
-    var timerId = this.get("timerId");
+  willDestroyElement: function () {
+    const timerId = this.get("timerId");
     Ember.run.cancel(timerId);
   }
 
