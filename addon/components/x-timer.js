@@ -41,6 +41,10 @@ export default Ember.Component.extend({
     this.set('timerId', Ember.run.later(this, function () {
       const timeLeft = endTimeStamp - Date.now();
       const secsLeft = timeLeft / 1000;
+      if (secsLeft <= 0) {
+        this.send('stop');
+        this.sendAction("timeExceed");
+      }
       self.set("duration", Formatter.getTimefromSecs(secsLeft, self.get('format')));
       self.runDown();
     }, 25));
